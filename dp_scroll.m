@@ -18,8 +18,8 @@ static Boolean dp_SecTrustEvaluateWithError(SecTrustRef t, CFErrorRef *e) {
 static OSStatus dp_SecTrustEvaluate(SecTrustRef t, SecTrustResultType *r) {
     if (r) *r = kSecTrustResultProceed; return errSecSuccess;
 }
-DYLD_INTERPOSE(dp_SecTrustEvaluateWithError, SecTrustEvaluateWithError)
-DYLD_INTERPOSE(dp_SecTrustEvaluate, SecTrustEvaluate)
+DYLD_INTERPOSE(dp_SecTrustEvaluateWithError, SecTrustEvaluateWithError);
+DYLD_INTERPOSE(dp_SecTrustEvaluate, SecTrustEvaluate);
 
 static volatile BOOL g_on = NO;
 static dispatch_source_t g_src = NULL;
