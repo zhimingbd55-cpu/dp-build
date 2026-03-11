@@ -7,10 +7,18 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build iOS dylib (arm64 + arm64e)
+
+      - name: Select latest Xcode
         run: |
-          SDK=$(xcrun -sdk iphoneos --show-sdk-path)
-          xcrun -sdk iphoneos clang \
+          XCODE=$(ls -td /Applications/Xcode*.app | head -1)
+          sudo xcode-select -s "$XCODE"
+          echo "Xcode: $XCODE"
+          xcrun --sdk iphoneos --show-sdk-path
+
+      - name: Build iOS dylib
+        run: |
+          SDK=$(xcrun --sdk iphoneos --show-sdk-path)
+          xcrun --sdk iphoneos clang \
             -arch arm64 \
             -arch arm64e \
             -miphoneos-version-min=14.0 \
@@ -18,12 +26,14 @@ jobs:
             -framework UIKit \
             -framework Foundation \
             -framework Security \
-            -shared \
+            -Wno-deprecated-declarations \
+            -dynamiclib \
             -Wl,-install_name,@executable_path/Frameworks/dp_scroll.dylib \
             -o dp_scroll.dylib \
             dp_scroll.m
           file dp_scroll.dylib
           ls -lh dp_scroll.dylib
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
