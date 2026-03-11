@@ -2,6 +2,7 @@
 @import Foundation;
 @import Security;
 #include <objc/runtime.h>
+#import <dispatch/dispatch.h>
 
 #ifndef DYLD_INTERPOSE
 #define DYLD_INTERPOSE(_new, _old) \
