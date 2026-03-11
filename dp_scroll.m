@@ -1,7 +1,7 @@
 @import UIKit;
 @import Foundation;
 @import Security;
-@import ObjectiveC.runtime;
+#include <objc/runtime.h>
 
 #ifndef DYLD_INTERPOSE
 #define DYLD_INTERPOSE(_new, _old) \
