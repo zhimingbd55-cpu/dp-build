@@ -3,7 +3,6 @@
 @import Security;
 @import ObjectiveC.runtime;
 
-/* DYLD_INTERPOSE */
 #ifndef DYLD_INTERPOSE
 #define DYLD_INTERPOSE(_new, _old) \
   __attribute__((used)) \
@@ -12,7 +11,6 @@
     { (const void *)&(_new), (const void *)&(_old) }
 #endif
 
-/* SSL bypass */
 static Boolean dp_SecTrustEvaluateWithError(SecTrustRef t, CFErrorRef *e) {
     if (e) *e = NULL; return YES;
 }
@@ -22,7 +20,6 @@ static OSStatus dp_SecTrustEvaluate(SecTrustRef t, SecTrustResultType *r) {
 DYLD_INTERPOSE(dp_SecTrustEvaluateWithError, SecTrustEvaluateWithError)
 DYLD_INTERPOSE(dp_SecTrustEvaluate, SecTrustEvaluate)
 
-/* Auto scroll */
 static volatile BOOL g_on = NO;
 static dispatch_source_t g_src = NULL;
 
@@ -49,7 +46,7 @@ static void dp_swipe(void) {
     dispatch_async(dispatch_get_main_queue(), ^{
         UIScrollView *sv = dp_best_sv(); if (!sv) return;
         CGFloat h = UIScreen.mainScreen.bounds.size.height;
-        CGFloat amt = h*(.28f+arc4random_uniform(32)/100.f);
+        CGFloat amt = h*(.28f+(float)arc4random_uniform(32)/100.f);
         CGFloat maxY = sv.contentSize.height-sv.frame.size.height;
         CGFloat newY = sv.contentOffset.y+amt;
         if (maxY>0 && newY>maxY) [sv setContentOffset:CGPointZero animated:NO];
@@ -71,7 +68,6 @@ static void dp_stop(void) {
 }
 static void dp_toggle(void) { g_on ? dp_stop() : dp_start(); }
 
-/* Shake toggle */
 @interface UIWindow (DPShake) @end
 @implementation UIWindow (DPShake)
 + (void)load {
