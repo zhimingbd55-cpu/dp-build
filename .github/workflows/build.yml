@@ -1,42 +1,14 @@
-name: Build dp_scroll.dylib
-on:
-  push:
-  workflow_dispatch:
-jobs:
-  build:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Select latest Xcode
-        run: |
-          XCODE=$(ls -td /Applications/Xcode*.app | head -1)
-          sudo xcode-select -s "$XCODE"
-          echo "Xcode: $XCODE"
-          xcrun --sdk iphoneos --show-sdk-path
-
       - name: Build iOS dylib
         run: |
           SDK=$(xcrun --sdk iphoneos --show-sdk-path)
           xcrun --sdk iphoneos clang \
-            -arch arm64 \
-            -arch arm64e \
+            -arch arm64 -arch arm64e \
             -miphoneos-version-min=14.0 \
             -isysroot "$SDK" \
-            -framework UIKit \
-            -framework Foundation \
-            -framework Security \
+            -fmodules \
+            -framework UIKit -framework Foundation -framework Security \
             -Wno-deprecated-declarations \
             -dynamiclib \
             -Wl,-install_name,@executable_path/Frameworks/dp_scroll.dylib \
-            -o dp_scroll.dylib \
-            dp_scroll.m
-          file dp_scroll.dylib
-          ls -lh dp_scroll.dylib
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dp_scroll_dylib
-          path: dp_scroll.dylib
-          retention-days: 7
+            -o dp_scroll.dylib dp_scroll.m
+          file dp_scroll.dylib && ls -lh dp_scroll.dylib
